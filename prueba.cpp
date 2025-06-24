@@ -39,7 +39,7 @@ void preordenRec(Nodo* raiz);
 void postordenRec(Nodo* raiz);
 
 // Visualización tipo ASCII
-void imprimirASCII(Nodo* n, int nivel = 0);
+void imprimirASCII(Nodo* n, const string& titulo = "Arbol");
 
 // Mostrar menú de usuario
 void mostrarMenu();
@@ -155,12 +155,28 @@ void postordenRec(Nodo* raiz) {    // Recorre el árbol en postorden: izquierda 
     cout << raiz->id << " - " << raiz->nombre << " (Edad: " << raiz->edad << ")" << endl;   // Finalmente imprimir el nodo actual
 }
 
-void imprimirASCII(Nodo* n, int nivel) {    // Dibuja el árbol rotado 90° hacia la izquierda para visualizar la estructura
-    if (n == NULL) return;    //si el nodo es NULL, no hay nada que imprimir
-    imprimirASCII(n->der, nivel + 1);   // Primero imprimir el subárbol derecho (aparecerá arriba en la visualización)
-    for (int i = 0; i < nivel; i++) cout << "    ";   // Imprimir espacios de indentación según el nivel del nodo
-    cout << n->id << " (" << n->nombre << ")" << endl;   // Imprimir el ID y nombre del nodo actual
-    imprimirASCII(n->izq, nivel + 1);   // Finalmente imprimir el subárbol izquierdo 
+// Muestra el árbol de forma vertical usando ramas con '/' y '\\'
+static void imprimirASCIIRec(Nodo* n, const string& prefijo, bool esIzq) {
+    if (n == NULL) return;
+
+    cout << prefijo << (esIzq ? "|-- " : "\\-- ") << n->id << " (" << n->nombre << ")" << endl;
+
+    string nuevoPrefijo = prefijo + (esIzq ? "|   " : "    ");
+    if (n->izq)  imprimirASCIIRec(n->izq, nuevoPrefijo, true);
+    if (n->der)  imprimirASCIIRec(n->der, nuevoPrefijo, false);
+}
+
+// Función pública para imprimir el árbol con una cabecera
+void imprimirASCII(Nodo* n, const string& titulo) {
+    if (n == NULL) {
+        cout << "(árbol vacío)" << endl;
+        return;
+    }
+
+    cout << titulo << endl;
+    cout << n->id << " (" << n->nombre << ")" << endl;
+    if (n->izq)  imprimirASCIIRec(n->izq, "", true);
+    if (n->der)  imprimirASCIIRec(n->der, "", false);
 }
 
 void mostrarMenu() {         // Muestra la interfaz de usuario con todas las opciones disponibles
